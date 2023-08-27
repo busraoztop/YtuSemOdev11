@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+    <div>
+        <button onclick="yeniOyunOlustur()">Yeni Oyun</button>
+    </div>
+    <div id="frame" class="grid-frame">
+    </div>
+    <div>
+        <h2 id="eslenenSayi"></h2>
+    </div>
+
+    <script>
+        const assets = ["/resim/kedi.jpg",
+            "/resim/kus.jpg",
+            "/resim/papatya.jpg",
+            "/resim/gerbera.jpg"]
+
+        let arrYeniListe = []
+        let toplamSecilen = 0
+        let bulunanlar = []
+        let secim1 = ""
+
+
+        const eslenenSayiElement = document.querySelector("#eslenenSayi")
+
+        yeniOyunOlustur()
+
+        function yeniOyunOlustur() {
+            arrYeniListe = []
+            bulunanlar = []
+            eslenenSayiElement.innerHTML = "Eşlenen Kart Sayısı: " + bulunanlar.length
+
+            while (arrYeniListe.length < 8) {
+                const RastgeleSayi = Math.trunc(Math.random() * 4)
+                const RastgeleSayiKontrolu = arrYeniListe.filter(x => x === assets[RastgeleSayi])
+                if (RastgeleSayiKontrolu.length < 2) {
+                    arrYeniListe.push(assets[RastgeleSayi])
+                }
+            }
+
+            resimleriOlustur()
+
+        }
+
+        function resimleriOlustur() {
+            const divElement = document.querySelector("#frame")
+            divElement.innerHTML = ""
+
+            arrYeniListe.forEach(item => {
+                const imgElement = document.createElement("img")
+
+                const varMi = bulunanlar.filter(x => x === item)
+
+                if (varMi.length) {
+                    imgElement.src = item
+                } else {
+                    imgElement.src = "/resim/soru.jpg"//item
+                    imgElement.alt = item
+                    imgElement.addEventListener('click', abc)
+                }
+                divElement.append(imgElement)
+
+            })
+
+            function abc(event) {
+                toplamSecilen++
+
+
+                if (toplamSecilen === 1) {
+                    secim1 = event.target.alt
+                } else if (toplamSecilen === 2) {
+                    if (secim1 === event.target.alt) {
+                        bulunanlar.push(event.target.alt)
+
+                        eslenenSayiElement.innerHTML = "Eşlenen Kart Sayısı:" + bulunanlar.length
+
+                    }
+                }
+
+                if (toplamSecilen <= 2) {
+                    event.target.src = event.target.alt
+                } else if (toplamSecilen > 2) {
+                    toplamSecilen = 0
+                    resimleriOlustur()
+                }
+            }
+
+        }
+
+    </script>
+
+</body>
+
+</html>
